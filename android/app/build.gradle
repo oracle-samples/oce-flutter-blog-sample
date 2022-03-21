@@ -1,0 +1,112 @@
+/*
+ * Copyright (c) 2022, Oracle and/or its affiliates.
+ * Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl/
+ */
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterRoot = System.getenv("FLUTTER_SDK")
+if (flutterRoot == null) {
+    flutterRoot = localProperties.getProperty('flutter.sdk')
+}
+if (flutterRoot == null) {
+    throw new FileNotFoundException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+}
+
+def flutterVersionCode = System.getenv("FLUTTER_VERSION_CODE")
+if (flutterVersionCode == null) {
+    flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+}
+if (flutterVersionCode == null) {
+    flutterVersionCode = 1
+} else {
+    flutterVersionCode = flutterVersionCode.toInteger()
+}
+
+def flutterVersionName = System.getenv("FLUTTER_VERSION_NAME")
+if (flutterVersionName == null) {
+    flutterVersionName = localProperties.getProperty('flutter.versionName')
+}
+if (flutterVersionName == null) {
+    flutterVersionName = '1.0.0'
+}
+
+def flutterMinSdkVersion = System.getenv("FLUTTER_MIN_SDK_VERSION")
+if (flutterMinSdkVersion == null) {
+    flutterMinSdkVersion = localProperties.getProperty('flutter.minSdkVersion')
+}
+if (flutterMinSdkVersion == null) {
+    flutterMinSdkVersion = 21
+} else {
+    flutterMinSdkVersion = flutterMinSdkVersion.toInteger()
+}
+
+def flutterTargetSdkVersion = System.getenv("FLUTTER_TARGET_SDK_VERSION")
+if (flutterTargetSdkVersion == null) {
+    flutterTargetSdkVersion = localProperties.getProperty('flutter.targetSdkVersion')
+}
+if (flutterTargetSdkVersion == null) {
+    flutterTargetSdkVersion = 30
+} else {
+    flutterTargetSdkVersion = flutterTargetSdkVersion.toInteger()
+}
+
+def flutterCompileSdkVersion = System.getenv("FLUTTER_COMPILE_SDK_VERSION")
+if (flutterCompileSdkVersion == null) {
+    flutterCompileSdkVersion = localProperties.getProperty('flutter.compileSdkVersion')
+}
+if (flutterCompileSdkVersion == null) {
+    flutterCompileSdkVersion = 30
+} else {
+    flutterCompileSdkVersion = flutterCompileSdkVersion.toInteger()
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+
+android {
+    compileSdkVersion flutterCompileSdkVersion
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    lintOptions {
+        disable 'InvalidPackage'
+    }
+
+    defaultConfig {
+        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        applicationId "com.example.oceflutterblogsample"
+        minSdkVersion flutterMinSdkVersion
+        targetSdkVersion flutterTargetSdkVersion
+        versionCode flutterVersionCode
+        versionName flutterVersionName
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            // TODO: Add your own signing config for the release build.
+            // Signing with the debug keys for now, so `flutter run --release` works.
+            signingConfig signingConfigs.debug
+        }
+    }
+}
+
+flutter {
+    source '../..'
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test:runner:1.4.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+}
