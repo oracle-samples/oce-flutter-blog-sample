@@ -68,7 +68,7 @@ class _TopicsListState extends State<TopicsList> {
     } else if (menuOption == MenuOption.CONTACT_US) {
       url = topicListModel!.contactUrl;
     }
-    if (await canLaunch(url!)) launch(url);
+    if (await canLaunchUrl(Uri.parse(url!))) launchUrl(Uri.parse(url));
   }
 
   @override
